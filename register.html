@@ -1,4 +1,6 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="https://cdn.tailwindcss.com"></script></head>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script></head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
 <h2 class="text-2xl font-bold mb-1">Sign Up</h2><p class="text-gray-500 mb-6">It's quick and easy.</p>
@@ -13,9 +15,23 @@
 </div>
 <script>
 async function register(){
-  const body = {name: name.value, email: email.value, dept: dept.value, phone: phone.value, password: password.value};
-  const res = await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  const d = await res.json(); msg.innerText = d.message; if(d.success) setTimeout(()=>location.href='index.html',1500);
+  const body = {
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    dept: document.getElementById('dept').value,
+    phone: document.getElementById('phone').value,
+    password: document.getElementById('password').value
+  };
+  if(!body.name || !body.email || !body.password){ document.getElementById('msg').innerText='Fill all fields'; return; }
+  document.getElementById('msg').innerText='Creating...';
+  try{
+    const res = await fetch('/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d = await res.json();
+    document.getElementById('msg').innerText = 'Account Created! Redirecting...';
+    setTimeout(()=>location.href='index.html',1000);
+  }catch(e){
+    document.getElementById('msg').innerText = 'Error: '+e.message;
+  }
 }
 </script>
 </body></html>
