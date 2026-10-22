@@ -46,7 +46,7 @@ async function login(){
   if(!email || !password){ msg.innerText="Enter email & password"; return; }
   msg.innerText="Checking...";
   msg.className="text-center text-sm text-blue-500";
-  const res = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+  const res = await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
   const data = await res.json();
   if(data.success){
     msg.innerText="Login success!";
