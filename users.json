@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1792678806002,
+    "email": "janie123@gmail.com",
+    "dept": "CSE",
+    "phone": "1234567890",
+    "password": "123",
+    "have_skills": "python",
+    "want_skills": "c",
+    "bio": "Hey, I'm using SkillSwap!",
+    "avatar": "",
+    "name": "Janie"
+  },
+  {
+    "id": 1792680258652,
+    "email": "akhil@gmail.com",
+    "dept": "IT",
+    "phone": "9589545897",
+    "password": "1234",
+    "have_skills": "C",
+    "want_skills": "Java",
+    "bio": "Hey, I'm using SkillSwap!",
+    "avatar": "",
+    "name": "Akhil"
+  },
+  {
+    "id": 1792681162825,
+    "email": "amin@gmail.com",
+    "dept": "CSE",
+    "phone": "9345697642",
+    "password": "1234",
+    "have_skills": "",
+    "want_skills": "",
+    "bio": "Hey, I'm using SkillSwap!",
+    "avatar": ""
+  }
+]

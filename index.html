@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillSwap - Login</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-[#f0f2f5] min-h-screen">
+<div class="min-h-screen flex items-center justify-center p-4">
+  <div class="max-w-6xl w-full grid md:grid-cols-2 gap-12 items-center">
+    <!-- Left Branding -->
+    <div class="hidden md:block">
+      <h1 class="text-6xl font-extrabold text-indigo-600">SkillSwap</h1>
+      <p class="text-2xl mt-4 text-gray-700 leading-relaxed">Connect with peer tutors in your campus. <br>Share skills, learn together, grow faster.</p>
+      <div class="mt-8 flex gap-4 text-gray-600">
+        <span><i class="fa-solid fa-check-circle text-green-500"></i> Real-time Chat</span>
+        <span><i class="fa-solid fa-check-circle text-green-500"></i> Smart Matching</span>
+        <span><i class="fa-solid fa-check-circle text-green-500"></i> MySQL + Node</span>
+      </div>
+      <img src="https://cdn3d.iconscout.com/3d/premium/thumb/boy-learning-with-laptop-3d-illustration-download-in-png-blend-fbx-gltf-file-formats--education-online-study-school-pack-e-learning-illustrations-4723148.png" class="w-96 mt-10">
+    </div>
+    <!-- Right Login Card -->
+    <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-8 w-full max-w-[400px] mx-auto">
+      <h2 class="text-2xl font-bold text-center md:hidden text-indigo-600 mb-6">SkillSwap</h2>
+      <div class="space-y-4">
+        <input id="email" type="email" placeholder="Email address" class="w-full p-3.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-[17px]">
+        <input id="password" type="password" placeholder="Password" class="w-full p-3.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-[17px]">
+        <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-lg text-[20px] transition">Log in</button>
+        <p id="msg" class="text-center text-sm text-red-500"></p>
+        <div class="text-center"><a href="#" class="text-indigo-600 text-sm">Forgotten password?</a></div>
+        <hr class="my-6">
+        <div class="text-center">
+          <button onclick="location.href='register.html'" class="bg-[#42b72a] hover:bg-[#36a420] text-white font-bold px-6 py-3 rounded-lg text-[17px]">Create new account</button>
+        </div>
+      </div>
+      <p class="text-center text-xs text-gray-500 mt-6"><b>Create a Page</b> for peer learning club.</p>
+    </div>
+  </div>
+</div>
+<script>
+async function login(){
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const msg = document.getElementById('msg');
+  if(!email || !password){ msg.innerText="Enter email & password"; return; }
+  msg.innerText="Checking...";
+  msg.className="text-center text-sm text-blue-500";
+  const res = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+  const data = await res.json();
+  if(data.success){
+    msg.innerText="Login success!";
+    msg.className="text-center text-sm text-green-600";
+    localStorage.setItem('skill_user', JSON.stringify(data.user));
+    setTimeout(()=> location.href='dashboard.html', 500);
+  } else {
+    msg.innerText = data.message; // This will show "No account found..."
+    msg.className="text-center text-sm text-red-600 font-bold";
+    if(data.message.includes("No account found")){
+      // Auto suggest to register after 2 sec
+      setTimeout(()=>{ if(confirm("No account found. Do you want to create new account?")) location.href='register.html'; }, 1000);
+    }
+  }
+}
+</script>
+</body>
+</html>

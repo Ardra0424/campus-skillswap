@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAMPUS SKILLSWAP</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{--bg:#f3f4f6;--card:#fff;--text:#111827;--border:#e5e7eb}
+.dark{--bg:#0b0b0f;--card:#18181b;--text:#f4f4f5;--border:#27272a}
+body{background:var(--bg);color:var(--text)}
+.card{background:var(--card);border:1px solid var(--border)}
+.theme-light{ background:#f9fafb !important; color:#111 !important; }
+.theme-dark{ background:#18181b !important; color:#fff !important; }
+.theme-love{ background: linear-gradient(135deg,#ff9a9e 0%,#fecfef 100%) !important; color:#111 !important; }
+.theme-ocean{ background: linear-gradient(135deg,#667eea 0%,#764ba2 100%) !important; color:#fff !important; }
+.theme-sunset{ background: linear-gradient(135deg,#ff7e5f 0%,#feb47b 100%) !important; color:#111 !important; }
+.theme-forest{ background: linear-gradient(135deg,#a8e063 0%,#56ab2f 100%) !important; color:#fff !important; }
+.theme-insta{ background: linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045) !important; color:#fff !important; }
+.theme-midnight{ background: linear-gradient(135deg,#232526,#414345) !important; color:#fff !important; }
+</style>
+</head>
+<body>
+<nav class="card sticky top-0 z-50 px-4 py-3 flex justify-between items-center shadow-sm">
+  <h1 class="font-black text-[17px] tracking-widest"><span class="text-indigo-600">CAMPUS</span> SKILLSWAP</h1>
+  <div class="flex-1 flex justify-center px-8">
+    <div class="relative w-full max-w-md">
+      <i class="fa-solid fa-magnifying-glass absolute left-4 top-3 text-gray-400 text-sm"></i>
+      <input id="search" onkeyup="searchTutor()" placeholder="Search skill... e.g. Python" class="w-full pl-10 pr-4 py-2.5 rounded-full border bg-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="relative">
+      <button onclick="toggleReqBox()" class="relative w-9 h-9 rounded-full border flex items-center justify-center"><i class="fa-solid fa-bell"></i><span id="reqBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center hidden">0</span></button>
+      <div id="reqBox" class="hidden absolute right-0 top-12 card rounded-2xl shadow-2xl w-80 p-4"><h3 class="font-bold text-sm mb-3">Tutor Requests</h3><div id="reqList" class="space-y-2 max-h-64 overflow-auto text-sm">No requests</div></div>
+    </div>
+    <button onclick="toggleTheme()" class="w-9 h-9 rounded-full border flex items-center justify-center"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
+    <div class="relative">
+      <button onclick="toggleProfileMenu(event)" class="flex items-center gap-2 font-semibold hover:text-indigo-600"><span id="topUserName" class="text-sm">User</span><div id="topAvatar" class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-bold">U</div></button>
+      <div id="profileMenu" class="hidden absolute right-0 top-12 card rounded-xl shadow-xl p-2 w-48"><button onclick="openMyProfile()" class="w-full text-left p-2.5 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg text-sm"><i class="fa-solid fa-user"></i> My Profile</button><button onclick="logout()" class="w-full text-left p-2.5 hover:bg-red-50 text-red-600 rounded-lg text-sm"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></div>
+    </div>
+  </div>
+</nav>
+
+<div class="max-w-5xl mx-auto p-6">
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="card rounded-2xl p-5 h-fit"><h3 class="font-bold mb-4">Your Skills</h3><div class="bg-indigo-50 dark:bg-indigo-950/30 p-3 rounded-xl mb-3 border"><p class="text-[11px] opacity-60">YOU CAN TEACH</p><p id="leftHave" class="font-semibold text-sm mt-1">Add in profile</p></div><div class="bg-green-50 dark:bg-green-950/30 p-3 rounded-xl border"><p class="text-[11px] opacity-60">YOU WANT TO LEARN</p><p id="leftWant" class="font-semibold text-sm mt-1">Add in profile</p></div><button onclick="openMyProfile()" class="w-full mt-4 border py-2.5 rounded-xl text-sm font-semibold">+ Edit Skills in Profile</button></div>
+    <div class="md:col-span-2"><div class="card rounded-2xl p-8 min-h-[400px]"><div id="defaultView" class="text-center py-20"><div class="w-20 h-20 mx-auto bg-indigo-50 dark:bg-zinc-800 rounded-full flex items-center justify-center text-3xl mb-4"><i class="fa-solid fa-magnifying-glass text-indigo-400"></i></div><h3 class="font-bold">Search a skill to find tutors</h3><p class="text-sm opacity-60 mt-2">Type Python, Guitar, Dance, Java in the top search bar</p></div><div id="tutorSection" class="hidden"><h2 class="font-bold text-lg mb-1">Tutors for <span id="searchKey" class="text-indigo-600"></span></h2><p class="text-xs opacity-60 mb-4"><span id="count">0</span> tutors found</p><div id="tutorList" class="space-y-3"></div></div></div></div>
+  </div>
+</div>
+
+<div id="myProfilePage" class="fixed inset-0 bg-black/60 hidden z-[100] flex items-center justify-center p-4"><div class="card w-full max-w-2xl rounded-2xl max-h-[92vh] overflow-auto"><div class="p-5 border-b flex justify-between items-center sticky top-0 card"><h2 class="font-bold text-lg">My Profile</h2><button onclick="closeMyProfile()" class="w-8 h-8 rounded-full border">✕</button></div><div class="p-6 space-y-6"><div class="text-center"><div id="myAvatar" class="w-24 h-24 mx-auto bg-indigo-600 text-white rounded-full flex items-center justify-center text-4xl font-bold">U</div><h3 id="myName" class="font-bold text-xl mt-3"></h3><p id="myEmail" class="text-sm opacity-60"></p><p id="myBio" class="text-sm mt-2"></p></div><div><h4 class="font-bold text-sm bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200 p-3 rounded-xl border">Edit Profile - Personal Details</h4><div class="grid gap-3 mt-3"><input id="editName" class="p-3 border rounded-xl bg-transparent" placeholder="Full Name"><input id="editDept" class="p-3 border rounded-xl bg-transparent" placeholder="Department"><input id="editPhone" class="p-3 border rounded-xl bg-transparent" placeholder="Phone"><textarea id="editBio" class="p-3 border rounded-xl bg-transparent" placeholder="Bio"></textarea><button onclick="saveProfile()" class="bg-indigo-600 text-white py-3 rounded-xl font-bold">Save Profile</button></div></div><div><h4 class="font-bold text-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 p-3 rounded-xl border">Add Your Skills - Teach & Learn</h4><div class="grid gap-3 mt-3"><input id="editHave" class="p-3 border rounded-xl bg-transparent" placeholder="I can teach: Python, Design"><input id="editWant" class="p-3 border rounded-xl bg-transparent" placeholder="I want to learn: Java, Guitar"><button onclick="saveSkills()" class="bg-green-600 text-white py-3 rounded-xl font-bold">Save Skills</button></div></div><div><h4 class="font-bold text-sm bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100 p-3 rounded-xl border">Change Password - Security</h4><div class="grid gap-3 mt-3"><input id="oldPass" type="password" class="p-3 border rounded-xl bg-transparent" placeholder="Old Password"><input id="newPass" type="password" class="p-3 border rounded-xl bg-transparent" placeholder="New Password"><button onclick="changePass()" class="bg-zinc-900 dark:bg-white dark:text-black text-white py-3 rounded-xl font-bold">Update Password</button></div></div><p id="msg" class="text-center text-sm font-bold"></p></div></div></div>
+
+<div id="otherProfile" class="fixed inset-0 bg-black/60 hidden z-[100] flex items-center justify-center p-4"><div class="card w-full max-w-md rounded-2xl p-6 text-center"><div id="otherAvatar" class="w-24 h-24 mx-auto bg-zinc-800 text-white rounded-full flex items-center justify-center text-3xl font-bold">A</div><h2 id="otherName" class="font-bold text-xl mt-3"></h2><p id="otherDept" class="text-sm opacity-60"></p><p id="otherBio" class="text-sm mt-2"></p><div class="grid grid-cols-2 gap-3 mt-4 text-left"><div class="border p-3 rounded-xl"><p class="text-[11px] opacity-60">CAN TEACH</p><p id="otherHave" class="text-sm font-semibold"></p></div><div class="border p-3 rounded-xl"><p class="text-[11px] opacity-60">WANTS</p><p id="otherWant" class="text-sm font-semibold"></p></div></div><div class="flex gap-2 mt-5"><button onclick="sendReq()" class="flex-1 border py-3 rounded-xl text-sm font-bold">Send Request</button><button onclick="openChatFromProfile()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl text-sm font-bold">Message</button></div><button onclick="closeOther()" class="mt-3 text-sm opacity-60">Close</button></div></div>
+
+<!-- CHAT BOX FIXED -->
+<div id="chatBox" class="fixed bottom-0 right-6 w-[360px] card rounded-t-2xl shadow-2xl hidden z-[90] flex flex-col border" style="height:520px">
+  <div class="p-3 border-b flex justify-between items-center">
+    <div class="flex items-center gap-2"><div id="chatAv" class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-xs">A</div><div><b id="chatName" class="text-sm"></b><p id="chatSkill" class="text-[11px] opacity-60"></p></div></div>
+    <div class="flex items-center gap-2">
+      <button onclick="toggleChatMenu(event)" class="w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 flex items-center justify-center"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+      <button onclick="closeChat()" class="w-8 h-8 border rounded-full">✕</button>
+    </div>
+  </div>
+  
+  <div class="relative flex-1 flex flex-col overflow-hidden">
+    <div id="chatMsgs" class="flex-1 overflow-auto p-3 space-y-2 theme-light transition-all duration-300"></div>
+    
+    <!-- 3 dots menu -->
+    <div id="chatMenu" class="hidden absolute right-2 top-2 card rounded-xl shadow-xl w-56 py-2 z-30 border">
+      <button onclick="openThemePicker(event)" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-zinc-800 text-sm flex items-center gap-3"><i class="fa-solid fa-palette w-4"></i> Change Theme</button>
+      <button onclick="clearChat()" class="w-full text-left px-4 py-2.5 hover:bg-red-50 text-red-600 text-sm flex items-center gap-3"><i class="fa-solid fa-trash w-4"></i> Clear Chat</button>
+      <button onclick="viewOther(chatUser.id); document.getElementById('chatMenu').classList.add('hidden')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-zinc-800 text-sm flex items-center gap-3"><i class="fa-solid fa-user w-4"></i> View Profile</button>
+    </div>
+
+    <!-- Theme Picker -->
+    <div id="themePicker" class="hidden absolute bottom-2 left-2 right-2 card rounded-2xl shadow-2xl p-4 border z-40">
+      <div class="flex justify-between items-center mb-3"><h3 class="font-bold text-sm">Choose Chat Theme</h3><button onclick="closeThemePicker()" class="w-7 h-7 rounded-full border text-xs">✕</button></div>
+      <div class="grid grid-cols-4 gap-3">
+        <button onclick="setChatTheme('theme-light')"><div class="w-full h-12 rounded-xl bg-[#f9fafb] border-2 hover:border-indigo-600"></div><p class="text-[10px] mt-1">Light</p></button>
+        <button onclick="setChatTheme('theme-dark')"><div class="w-full h-12 rounded-xl bg-[#18181b] border-2 hover:border-indigo-600"></div><p class="text-[10px] mt-1">Dark</p></button>
+        <button onclick="setChatTheme('theme-insta')"><div class="w-full h-12 rounded-xl bg-gradient-to-br from-[#833ab4] via-[#fd1d1d] to-[#fcb045] border-2 hover:border-indigo-600"></div><p class="text-[10px] mt-1">Mixed</p></button>
+        <button onclick="setChatTheme('theme-love')"><div class="w-full h-12 rounded-xl bg-gradient-to-br from-[#ff9a9e] to-[#fecfef] border-2 hover:border-indigo-600"></div><p class="text-[10px] mt-1">Love</p></button>
+        <button onclick="setChatTheme('theme-ocean')"><div class="w-full h-12 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] border-2 hover:border-indigo-600"></div><p class="text-[10px] mt-1">Ocean</p></button>
+        <button onclick="setChatTheme('theme-sunset')"><div class="w-full h-12 rounded-xl bg-gradient-to-br from-[#ff7e5f] to-[#feb47b] border-2 hover:border-indigo-600"></div><p class="text-[10px] mt-1">Sunset</p></button>
+        <button onclick="setChatTheme('theme-forest')"><div class="w-full h-12 rounded-xl bg-gradient-to-br from-[#a8e063] to-[#56ab2f] border-2 hover:border-indigo-600"></div><p class="text-[10px] mt-1">Forest</p></button>
+        <button onclick="setChatTheme('theme-midnight')"><div class="w-full h-12 rounded-xl bg-gradient-to-br from-[#232526] to-[#414345] border-2 hover:border-indigo-600"></div><p class="text-[10px] mt-1">Midnight</p></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-2 border-t flex gap-2 bg-white dark:bg-indigo-500"><input id="chatInput" placeholder="Ask for schedule..." class="flex-1 border rounded-full px-4 py-2 text-sm bg-transparent focus:outline-none"><button onclick="sendMsg()" class="bg-indigo-600 text-white w-9 h-9 rounded-full"><i class="fa-solid fa-paper-plane text-sm"></i></button></div>
+</div>
+
+<script>
+let rawUser = JSON.parse(localStorage.getItem('skill_user') || '{}');
+if(!rawUser || !rawUser.email){ location.href='index.html'; }
+let safeName = (rawUser.name && rawUser.name !== 'undefined' && rawUser.name !== 'null' && rawUser.name.trim()!=='') ? rawUser.name : rawUser.email.split('@')[0];
+let user = { id: rawUser.id, name: safeName, email: rawUser.email, dept: rawUser.dept||'', phone: rawUser.phone||'', bio: rawUser.bio||"Hey, I'm on Campus SkillSwap!", have_skills: rawUser.have_skills||'', want_skills: rawUser.want_skills||'', password: rawUser.password||'' };
+let allUsers=[], viewUserData=null, chatUser=null;
+
+function initTop(){ document.getElementById('topUserName').innerText=user.name; document.getElementById('topAvatar').innerText=user.name[0].toUpperCase(); document.getElementById('myAvatar').innerText=user.name[0].toUpperCase(); document.getElementById('myName').innerText=user.name; document.getElementById('myEmail').innerText=user.email; document.getElementById('myBio').innerText=user.bio; document.getElementById('leftHave').innerText=user.have_skills||'Add in profile'; document.getElementById('leftWant').innerText=user.want_skills||'Add in profile'; }
+initTop();
+function toggleTheme(){ document.body.classList.toggle('dark'); const d=document.body.classList.contains('dark'); localStorage.setItem('theme',d?'dark':'light'); document.getElementById('themeIcon').className=d?'fa-solid fa-sun':'fa-solid fa-moon'; }
+if(localStorage.getItem('theme')==='dark'){ document.body.classList.add('dark'); document.getElementById('themeIcon').className='fa-solid fa-sun'; }
+
+function toggleProfileMenu(e){ if(e) e.stopPropagation(); document.getElementById('profileMenu').classList.toggle('hidden'); }
+function toggleReqBox(){ document.getElementById('reqBox').classList.toggle('hidden'); loadReqs(); }
+
+function toggleChatMenu(e){ if(e) e.stopPropagation(); document.getElementById('chatMenu').classList.toggle('hidden'); document.getElementById('themePicker').classList.add('hidden'); }
+function openThemePicker(e){ if(e) e.stopPropagation(); document.getElementById('chatMenu').classList.add('hidden'); document.getElementById('themePicker').classList.remove('hidden'); }
+function closeThemePicker(){ document.getElementById('themePicker').classList.add('hidden'); }
+function setChatTheme(themeName){
+  const box=document.getElementById('chatMsgs');
+  box.className = 'flex-1 overflow-auto p-3 space-y-2 transition-all duration-300 ' + themeName;
+  if(chatUser) localStorage.setItem('chat_theme_' + chatUser.id, themeName);
+  closeThemePicker();
+}
+function loadSavedTheme(){ if(!chatUser) return; const saved = localStorage.getItem('chat_theme_' + chatUser.id); if(saved){ document.getElementById('chatMsgs').className = 'flex-1 overflow-auto p-3 space-y-2 transition-all duration-300 ' + saved; } }
+
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('#profileMenu') && !e.target.closest('[onclick*="toggleProfileMenu"]')){ document.getElementById('profileMenu').classList.add('hidden'); }
+  if(!e.target.closest('#reqBox') && !e.target.closest('[onclick*="toggleReqBox"]')){ document.getElementById('reqBox').classList.add('hidden'); }
+  if(!e.target.closest('#chatMenu') && !e.target.closest('[onclick*="toggleChatMenu"]') && !e.target.closest('#themePicker') && !e.target.closest('[onclick*="openThemePicker"]')){
+    document.getElementById('chatMenu').classList.add('hidden');
+    document.getElementById('themePicker').classList.add('hidden');
+  }
+});
+
+function openMyProfile(){ document.getElementById('myProfilePage').classList.remove('hidden'); editName.value=user.name; editDept.value=user.dept; editPhone.value=user.phone; editBio.value=user.bio; editHave.value=user.have_skills; editWant.value=user.want_skills; }
+function closeMyProfile(){ document.getElementById('myProfilePage').classList.add('hidden'); }
+function closeOther(){ document.getElementById('otherProfile').classList.add('hidden'); }
+async function load(){ const r=await fetch('/api/users'); allUsers=await r.json(); const me=allUsers.find(u=>u.id==user.id || u.email.toLowerCase()==user.email.toLowerCase()); if(me){ user={...user,...me, name: (me.name && me.name!=='undefined')?me.name:user.name}; localStorage.setItem('skill_user',JSON.stringify(user)); initTop(); } loadReqs(); }
+function searchTutor(){
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  if(!q){ document.getElementById('defaultView').classList.remove('hidden'); document.getElementById('tutorSection').classList.add('hidden'); return; }
+  const filtered=allUsers.filter(u=>u.email.toLowerCase()!==user.email.toLowerCase() && ((u.have_skills||'').toLowerCase().includes(q) || (u.name||'').toLowerCase().includes(q) || (u.want_skills||'').toLowerCase().includes(q)));
+  document.getElementById('defaultView').classList.add('hidden');
+  document.getElementById('tutorSection').classList.remove('hidden');
+  document.getElementById('searchKey').innerText=q;
+  document.getElementById('count').innerText=filtered.length;
+  document.getElementById('tutorList').innerHTML=filtered.map(u=>`
+    <div class="border rounded-2xl p-4 flex justify-between items-center hover:shadow-sm">
+      <div class="flex gap-3 items-center cursor-pointer" onclick="viewOther(${u.id})">
+        <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-700 rounded-full flex items-center justify-center font-bold">${(u.name||'U')[0].toUpperCase()}</div>
+        <div><b class="text-sm">${u.name}</b> <span class="text-[11px] border px-2 py-0.5 rounded-full">${u.dept||''}</span><br><span class="text-xs opacity-60">Teaches: ${u.have_skills||'Not set'} • Wants: ${u.want_skills||''}</span></div>
+      </div>
+      <div class="flex gap-2"><button onclick="viewOther(${u.id})" class="text-xs border px-3 py-1.5 rounded-full">View</button><button onclick="startChat(${u.id})" class="text-xs bg-black dark:bg-white dark:text-black text-white px-4 py-1.5 rounded-full">Message</button></div>
+    </div>`).join('') || `<p class="text-sm opacity-60 text-center py-8">No tutor found for "${q}"</p>`;
+}
+function viewOther(id){ viewUserData=allUsers.find(u=>u.id==id); document.getElementById('otherName').innerText=viewUserData.name; document.getElementById('otherDept').innerText=(viewUserData.dept||'')+' • '+viewUserData.email; document.getElementById('otherBio').innerText=viewUserData.bio||''; document.getElementById('otherHave').innerText=viewUserData.have_skills||'Not set'; document.getElementById('otherWant').innerText=viewUserData.want_skills||'Not set'; document.getElementById('otherAvatar').innerText=viewUserData.name[0].toUpperCase(); document.getElementById('otherProfile').classList.remove('hidden'); }
+function sendReq(){ fetch('/api/send-request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:user.id,to:viewUserData.id})}).then(()=>{ alert('Request sent to '+viewUserData.name); closeOther(); }); }
+function openChatFromProfile(){ closeOther(); startChat(viewUserData.id); }
+async function saveProfile(){ const res=await fetch('/api/update-profile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:user.id,name:editName.value,dept:editDept.value,phone:editPhone.value,bio:editBio.value})}); const d=await res.json(); if(d.success){ user=d.user; localStorage.setItem('skill_user',JSON.stringify(user)); initTop(); msg.innerText='Profile saved!'; setTimeout(()=>{msg.innerText=''; closeMyProfile();},800);} }
+async function saveSkills(){ const res=await fetch('/api/update-skills',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:user.id,have_skills:editHave.value,want_skills:editWant.value})}); const d=await res.json(); if(d.success){ user=d.user; localStorage.setItem('skill_user',JSON.stringify(user)); initTop(); msg.innerText='Skills saved!'; } }
+async function changePass(){ const res=await fetch('/api/change-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:user.id,oldPassword:oldPass.value,newPassword:newPass.value})}); const d=await res.json(); msg.innerText=d.success?'Password updated!':'Old password wrong'; msg.className=d.success?'text-green-600 text-center':'text-red-600 text-center'; }
+async function loadReqs(){ const r=await fetch(`/api/requests/${user.id}`); const reqs=await r.json(); const badge=document.getElementById('reqBadge'); if(reqs.length>0){ badge.innerText=reqs.length; badge.classList.remove('hidden'); } else badge.classList.add('hidden'); document.getElementById('reqList').innerHTML=reqs.length? reqs.map(x=>{ const from=allUsers.find(u=>u.id==x.from); return `<div class="border p-2 rounded-xl flex justify-between items-center"><span><b>${from?from.name:'User'}</b> wants to connect</span><button onclick="acceptReq(${x.id},${x.from})" class="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs">Accept</button></div>` }).join('') : '<p class="opacity-60 text-center py-4">No new requests</p>'; }
+async function acceptReq(id,fromId){ await fetch('/api/accept-request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); loadReqs(); startChat(fromId); }
+function startChat(id){ chatUser=allUsers.find(u=>u.id==id); document.getElementById('chatName').innerText=chatUser.name; document.getElementById('chatSkill').innerText=chatUser.have_skills||''; document.getElementById('chatAv').innerText=chatUser.name[0]; document.getElementById('chatBox').classList.remove('hidden'); loadMsgs(); loadSavedTheme(); }
+function closeChat(){ document.getElementById('chatBox').classList.add('hidden'); chatUser=null; closeThemePicker(); document.getElementById('chatMenu').classList.add('hidden'); }
+async function loadMsgs(){ if(!chatUser) return; const r=await fetch(`/api/chat/${user.id}/${chatUser.id}`); const msgs=await r.json(); document.getElementById('chatMsgs').innerHTML=msgs.map(m=>`<div class="${m.from==user.id?'ml-auto bg-black dark:bg-white dark:text-black text-white':'mr-auto border bg-white dark:bg-zinc-800'} p-2.5 px-3 rounded-2xl max-w-[75%] text-[13px] shadow-sm">${m.msg}<div class="text-[10px] opacity-50 mt-1">${m.time}</div></div>`).join(''); document.getElementById('chatMsgs').scrollTop=99999; }
+async function sendMsg(){ const txt=document.getElementById('chatInput').value.trim(); if(!txt||!chatUser) return; await fetch('/api/chat/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:user.id,to:chatUser.id,msg:txt})}); document.getElementById('chatInput').value=''; loadMsgs(); }
+async function clearChat(){ if(!chatUser||!confirm('Clear chat?')) return; await fetch('/api/chat/clear',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({u1:user.id,u2:chatUser.id})}); document.getElementById('chatMenu').classList.add('hidden'); loadMsgs(); }
+document.getElementById('chatInput').addEventListener('keydown',e=>{ if(e.key==='Enter') sendMsg(); });
+function logout(){ localStorage.clear(); location.href='index.html'; }
+load(); setInterval(()=>{ if(chatUser) loadMsgs(); loadReqs(); },3000);
+</script>
+</body>
+</html>
