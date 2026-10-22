@@ -22,6 +22,9 @@ app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
   }
 });
+app.get('/register.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 app.post('/register', (req, res) => {
   let users = [];
